@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Private New Year Note</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="animations.css">
+<style>
+  /* --- Base --- */
+  * { box-sizing: border-box; font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial; }
+  html,body { height:100%; margin:0; }
+  body {
+    display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(135deg,#eef2ff,#fdfbfb);
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    overflow:hidden;
+  }
+  .container { width:100%; max-width:420px; padding:20px; text-align:center; }
+
+  /* --- Unwrap button --- */
+  .unwrap-btn {
+    padding:18px 28px; font-size:1.04rem; font-weight:700; border-radius:50px;
+    border:none; cursor:pointer; color:#fff; background:#111827;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15); transition:transform .18s ease,box-shadow .18s ease;
+  }
+  .unwrap-btn:hover { transform:translateY(-3px); box-shadow:0 16px 40px rgba(0,0,0,0.22); }
+
+  /* --- Cards wrapper + layout --- */
+  .cards-wrapper { display:none; position:relative; width:100%; height:70vh; margin-top:20px; perspective:1200px; }
+  .card {
+    position:absolute; inset:0; border-radius:20px; padding:28px;
+    display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
+    box-shadow:0 20px 50px rgba(0,0,0,0.10); overflow:hidden;
+    transition: transform .55s cubic-bezier(.2,.9,.25,1), opacity .45s ease;
+    transform: translateX(120%); opacity:0; pointer-events:none;
+  }
+  .card.active { transform: translateX(0); opacity:1; pointer-events:auto; }
+  .card.prev { transform: translateX(-120%); opacity:0; pointer-events:none; }
+
+  .card h2 { margin:0 0 12px 0; font-size:1.25rem; letter-spacing:0.2px; color:#111827; }
+  .card .body { font-size:1rem; line-height:1.6; color:#111827; max-width:100%; white-space:pre-wrap; min-height:3.4em; }
+
+  /* --- card colors (light) --- */
+  .c1 { background: linear-gradient(180deg,#e8f7ff,#e0f2fe); } /* sky blue */
+  .c2 { background: linear-gradient(180deg,#fffce6,#fef9c3); } /* light yellow */
+  .c3 { background: linear-gradient(180deg,#f9f0f8,#f9bfbf); } /* baby pink */
+  .c4 { background: linear-gradient(180deg,#fbfbfd,#d1ffcb); } /* light grey */
+  .c5 { background: linear-gradient(180deg,#f6f3ff,#C4B5FD); } /* light purple */
+
+  /* --- nav --- */
+  .nav { position:absolute; bottom:14px; left:0; right:0; display:flex; justify-content:space-between; padding:0 18px; }
+  .nav button {
+    border:none; padding:10px 14px; border-radius:18px; font-weight:700; cursor:pointer;
+    background: rgba(255,255,255,0.6); backdrop-filter: blur(6px);
+    transition: transform .14s ease;
+  }
+  .nav button:active { transform:translateY(2px); }
+
+  /* --- emoji background container --- */
+  .emoji-bg {
+    position:absolute; inset:0; pointer-events:none; overflow:hidden;
+  }
+  .emoji-bg span {
+    position:absolute; top:-10%; font-size:24px; opacity:.12; filter:grayscale(.05) saturate(.9);
+    transform: translateY(-10vh) rotate(0deg);
+    will-change: transform, opacity;
+    animation-name:fall, sway, fadein;
+    animation-timing-function: linear, ease-in-out, ease;
+    animation-iteration-count: infinite, infinite, 1;
+    animation-duration: 6s, 3.5s, .6s;
+  }
+
+  /* Slight variations per index for natural randomization */
+  .emoji-bg span:nth-child(odd) { font-size:28px; opacity:.10; animation-duration:7s,4s,.7s; }
+  .emoji-bg span:nth-child(3n) { font-size:20px; opacity:.08; animation-duration:5.5s,3.8s,.6s; }
+
+  @keyframes fall {
+    0% { transform: translateY(-15vh) rotate(0deg); }
+    100% { transform: translateY(120vh) rotate(360deg); }
+  }
+  @keyframes sway {
+    0%   { transform: translateX(0) rotate(-8deg); }
+    50%  { transform: translateX(14px) rotate(8deg); }
+    100% { transform: translateX(0) rotate(-8deg); }
+  }
+  @keyframes fadein {
+    0% { opacity:0; }
+    50% { opacity:.12; }
+    100% { opacity:.12; }
+  }
+
+  /* Slight overlay so emoji stay subtle */
+  .card::after {
+    content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(255,255,255,0.0), rgba(255,255,255,0.02)); pointer-events:none;
+    border-radius:20px;
+  }
+
+  /* --- responsive tweaks --- */
+  @media (max-width:420px) {
+    .card { padding:22px; border-radius:18px; }
+    .emoji-bg span { font-size:20px; }
+  }
+
+  /* small helper to visually center text on final card if needed */
+  .centered { align-items:center; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <button class="unwrap-btn" id="unwrapBtn">Unwrap Friendship Stats with Awais</button>
+
+  <div class="cards-wrapper" id="cardsWrapper">
+
+    <!-- CARD 1: TRIP 2025 -->
+    <div class="card c1 centered" data-index="0">
+      <div class="emoji-bg" aria-hidden="true">
+        <span style="left:6%; animation-delay:.1s">✈️</span>
+        <span style="left:26%; animation-delay:.8s">🌅</span>
+        <span style="left:58%; animation-delay:1.6s">📸</span>
+        <span style="left:82%; animation-delay:1.2s">💫</span>
+      </div>
+      <h2>TRIP 2025</h2>
+      <div class="body" data-full=" The 2025 trip quietly became a turning point for me. It gave me real access to your friendship in person, unfiltered, and without conditions. I had wanted that conversation for a long time, because I respected who you are long before I ever said a word.
+When it finally happened, it felt SOMETHING GREAT I ACHIEVED IN TRUE WORDS, not forced and that’s why it stayed with me
+💖✨">The 2025 trip q</div>
+    </div>
+
+    <!-- CARD 2: CHATS -->
+    <div class="card c2 centered" data-index="1">
+      <div class="emoji-bg" aria-hidden="true">
+        <span style="left:8%; animation-delay:.2s">💬</span>
+        <span style="left:36%; animation-delay:1.0s">😂</span>
+        <span style="left:62%; animation-delay:1.4s">🌙</span>
+        <span style="left:86%; animation-delay:.6s">📱</span>
+      </div>
+      <h2>CHATS WITH YOU</h2>
+      <div class="body" data-full="Our chats have always been more than just words. Every conversation, every laugh, every late-night talk has built something real between us.
+Talking with you makes ordinary moments feel special, and I’ve cherished every single one. MERE KHYAAL SE AB RAMEEN 65% KRDY GI AMEEN☝💗  "></div>
+    </div>
+
+    <!-- CARD 3: PARTNER -->
+    <div class="card c3 centered" data-index="2">
+      <div class="emoji-bg" aria-hidden="true">
+        <span style="left:10%; animation-delay:.3s">🤝</span>
+        <span style="left:34%; animation-delay:1.2s">💼</span>
+        <span style="left:60%; animation-delay:1.8s">⭐</span>
+        <span style="left:78%; animation-delay:.9s">🚀</span>
+      </div>
+      <h2>SEEING YOU AS A PARTNER</h2>
+      <div class="body" data-full="I want to be honest with you in a calm, genuine way. I see you as someone. I’d like to have as a partner whether that’s in my real life, in business, or building something meaningful together. I’m not saying this casually, and I’m not joking at all.
+If it work, I’d see you as a co-founder, not just someone involved. And if it’s life, I’d want it to be about growing side by side.
+Whatever form it takes, I value the idea of building something real with you.✨💗"></div>
+    </div>
+
+    <!-- CARD 4: PROTECTIVE -->
+    <div class="card c4 centered" data-index="3">
+      <div class="emoji-bg" aria-hidden="true">
+        <span style="left:5%; animation-delay:.15s">🛡️</span>
+        <span style="left:28%; animation-delay:.9s">🤍</span>
+        <span style="left:56%; animation-delay:1.5s">🤙</span>
+        <span style="left:84%; animation-delay:.6s">💪</span>
+      </div>
+      <h2>ONLY YOU</h2>
+      <div class="body" data-full="I want you to know that I’ve done a lot, quietly, just for you. Every time I stood my ground or took a fight, it wasn’t for pride it was to make you feel safe, protected, and believe someone who really cares about you. I’ve carried these moments because I care, and because being there for you matters more than anything else.
+Everything I’ve done,and that will never change. And im here to help u Rameen just call upon me 🤙💖"></div>
+    </div>
+
+    <!-- CARD 5: FINAL NOTE -->
+    <div class="card c5 centered" data-index="4">
+      <div class="emoji-bg" aria-hidden="true">
+        <span style="left:12%; animation-delay:.4s">✨</span>
+        <span style="left:44%; animation-delay:1.0s">🤲</span>
+        <span style="left:72%; animation-delay:1.7s">🌙</span>
+      </div>
+      <h2>STEPPING INTO 2026 WITH YOU</h2>
+      <div class="body" data-full="Yaar, having you in my life is just… special.
+Every laugh, every chat, every little moment with you… I cherish them all.
+I hope this bond always stays strong, pure, real and LOYAL.
+May Allah bless you with happiness, success, and peace
+Ameen.🤲.✨"></div>
+    </div>
+
+    <div class="nav" aria-hidden="false">
+      <button id="backBtn">← Back</button>
+      <button id="nextBtn">Next →</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Elements
+  const unwrapBtn = document.getElementById('unwrapBtn');
+  const cardsWrapper = document.getElementById('cardsWrapper');
+  const cards = Array.from(document.querySelectorAll('.card'));
+  const nextBtn = document.getElementById('nextBtn');
+  const backBtn = document.getElementById('backBtn');
+
+  // state
+  let current = 0;
+  let typeTimers = []; // store timeouts per card to cancel when switching
+
+  // show initial card (0) when unwrap clicked
+  unwrapBtn.addEventListener('click', () => {
+    unwrapBtn.style.display = 'none';
+    cardsWrapper.style.display = 'block';
+    showCard(0, { instant:false });
+  });
+
+  // navigation handlers
+  nextBtn.addEventListener('click', () => showCard(current + 1));
+  backBtn.addEventListener('click', () => showCard(current - 1));
+
+  // swipe support
+  let startX = 0;
+  cardsWrapper.addEventListener('touchstart', e => { if(e.touches && e.touches[0]) startX = e.touches[0].clientX; });
+  cardsWrapper.addEventListener('touchend', e => {
+    const endX = e.changedTouches[0].clientX;
+    if (startX - endX > 50) showCard(current + 1);
+    if (endX - startX > 50) showCard(current - 1);
+  });
+
+  // showCard logic with typewriter
+  function showCard(index, opts = {}) {
+    const last = current;
+    if (index < 0) index = 0;
+    if (index > cards.length - 1) index = cards.length - 1;
+    current = index;
+
+    // clear previous timers
+    typeTimers.forEach(t => clearTimeout(t));
+    typeTimers = [];
+
+    cards.forEach((card, i) => {
+      card.classList.remove('active','prev');
+      if (i < index) card.classList.add('prev');
+      // hide all body text immediately to prepare for typewriter when active
+      const body = card.querySelector('.body');
+      if (body) body.textContent = '';
+    });
+
+    // small delay to allow classes to settle (makes transitions nicer)
+    requestAnimationFrame(() => {
+      cards[index].classList.add('active');
+      // typewrite the visible card body
+      const body = cards[index].querySelector('.body');
+      if (body) typeWrite(body, body.getAttribute('data-full') || '');
+    });
+  }
+
+  // Typewriter: types the full text into element, returns when done. Handles newlines.
+  function typeWrite(el, text) {
+    el.textContent = '';
+    const speed = 18; // ms per character (adjust for pace)
+    let i = 0;
+    const chars = Array.from(text);
+    function step() {
+      if (i >= chars.length) return;
+      el.textContent += chars[i++];
+      // small pause for new line characters to feel natural
+      const delay = chars[i-1] === '\n' ? speed * 6 : speed;
+      typeTimers.push(setTimeout(step, delay));
+    }
+    // initial small delay for polish
+    typeTimers.push(setTimeout(step, 220));
+  }
+
+  // keyboard navigation for convenience
+  document.addEventListener('keydown', e => {
+    if (cardsWrapper.style.display === 'block') {
+      if (e.key === 'ArrowRight') showCard(current + 1);
+      if (e.key === 'ArrowLeft') showCard(current - 1);
+    }
+  });
+
+  // Ensure state when user resizes or focuses; initial state: keep unwrap visible
+  window.addEventListener('resize', () => {/* no-op placeholder */});
+</script>
+
+</body>
+</html>
+
